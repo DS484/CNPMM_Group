@@ -12,11 +12,31 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login attempt:", formData);
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:8017/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success && data.data?.token && data.data?.user?.id) {
+        localStorage.setItem("token", data.data.token);
+        // Redirect to profile page
+        window.location.href = `/profile/${data.data.user.id}`;
+      } else {
+        setError(data.message || "Đăng nhập thất bại");
+      }
+    } catch (err) {
+      setError("Có lỗi xảy ra, vui lòng thử lại!");
+    }
+    setLoading(false);
   };
 
   return (
@@ -88,8 +108,13 @@ const Login = () => {
               </div>
 
               <Button type="submit" className="w-full h-12 text-base font-medium">
-                Đăng nhập
+                {loading ? "Đang xử lý..." : "Đăng nhập"}
               </Button>
+              {error && (
+                <div className="mt-2 text-center text-red-500 text-sm">
+                  {error}
+                </div>
+              )}
             </form>
 
             <div className="mt-6 text-center">
