@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { getUserProfile, updateUserProfile } from '@/service/userService'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,20 +21,37 @@ import {
   MessageCircle
 } from "lucide-react";
 
+interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  location?: string;
+  createdAt?: string;
+  bio?: string;
+  phone: string
+}
+
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    fullName: "Nguyễn Văn An",
-    email: "nguyenvanan@example.com",
-    phone: "+84 123 456 789",
-    bio: "Yêu thích công nghệ và kết nối với mọi người",
-    location: "Hà Nội, Việt Nam",
-    joinDate: "Tham gia từ tháng 3, 2024"
-  });
+    const [profileData, setProfileData] = useState<UserProfile | null>(null);
 
-  const handleSave = () => {
-    // Handle save profile logic here
-    console.log("Saving profile:", profileData);
+    useEffect(() => {
+        getUserProfile('68a933bf7c44003cba2e6783')
+          .then(data => setProfileData(data))
+          .catch(err => console.error("Lỗi load hồ sơ:", err))
+      }, []);
+
+  const handleSave = async () => {
+    if(!profileData) return
+    try {
+      const updated = await updateUserProfile(profileData.id, profileData)
+      setProfileData(updated)
+      setIsEditing(false)
+      console.log('Update success')
+    } catch (error) {
+      console.log('Failed')
+    }
     setIsEditing(false);
   };
 
@@ -70,7 +88,7 @@ const Profile = () => {
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
               <div className="relative">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src="/placeholder.svg" alt="Profile picture" />
+                  <AvatarImage src={profileData?.avatarUrl} alt="Profile picture" />
                   <AvatarFallback className="text-2xl bg-gradient-primary text-primary-foreground">
                     NA
                   </AvatarFallback>
@@ -85,20 +103,20 @@ const Profile = () => {
 
               <div className="flex-1 space-y-2">
                 <div className="flex items-center space-x-3">
-                  <h2 className="text-2xl font-bold">{profileData.fullName}</h2>
+                  <h2 className="text-2xl font-bold">{profileData?.name}</h2>
                   <Badge variant="secondary" className="bg-accent/10 text-accent">
                     Đang hoạt động
                   </Badge>
                 </div>
-                <p className="text-muted-foreground">{profileData.bio}</p>
+                <p className="text-muted-foreground">{profileData?.bio}</p>
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                   <div className="flex items-center space-x-1">
                     <MapPin className="h-4 w-4" />
-                    <span>{profileData.location}</span>
+                    <span>{profileData?.location}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-4 w-4" />
-                    <span>{profileData.joinDate}</span>
+                    <span>{profileData?.createdAt}</span>
                   </div>
                 </div>
               </div>
@@ -133,8 +151,8 @@ const Profile = () => {
                 <Label htmlFor="fullName">Họ và tên</Label>
                 <Input
                   id="fullName"
-                  value={profileData.fullName}
-                  onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
+                  value={profileData?.name}
+                  onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                   disabled={!isEditing}
                   className="h-11"
                 />
@@ -144,7 +162,7 @@ const Profile = () => {
                 <Label htmlFor="bio">Tiểu sử</Label>
                 <Input
                   id="bio"
-                  value={profileData.bio}
+                  value={profileData?.bio}
                   onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
                   disabled={!isEditing}
                   placeholder="Nói gì đó về bản thân..."
@@ -156,7 +174,7 @@ const Profile = () => {
                 <Label htmlFor="location">Vị trí</Label>
                 <Input
                   id="location"
-                  value={profileData.location}
+                  value={profileData?.location}
                   onChange={(e) => setProfileData({ ...profileData, location: e.target.value })}
                   disabled={!isEditing}
                   className="h-11"
@@ -191,7 +209,7 @@ const Profile = () => {
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
-                    value={profileData.email}
+                    value={profileData?.email}
                     onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
                     disabled={!isEditing}
                     className="h-11 flex-1"
@@ -205,7 +223,7 @@ const Profile = () => {
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <Input
                     id="phone"
-                    value={profileData.phone}
+                    value={profileData?.phone}
                     onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
                     disabled={!isEditing}
                     className="h-11 flex-1"
