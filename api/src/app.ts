@@ -5,7 +5,9 @@ import connectDB from './config/db'
 import userRoutes from './routes/userRoutes'
 
 dotenv.config()
-connectDB()
+;(async () => {
+  await connectDB()
+})()
 
 const app = express()
 
