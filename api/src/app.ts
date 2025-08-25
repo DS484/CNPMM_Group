@@ -4,6 +4,7 @@ import cors from 'cors'
 import connectDB from './config/db'
 import userRoutes from './routes/userRoutes'
 import authRoutes from './routes/authRoutes'
+import { errorHandlingMiddleware } from './middleware/error-handler.midleware'
 
 dotenv.config()
 ;(async () => {
@@ -27,5 +28,7 @@ app.use('/api/auth', authRoutes)
 
 // User
 app.use('/api/users', userRoutes)
+
+app.use(errorHandlingMiddleware)
 
 export default app
