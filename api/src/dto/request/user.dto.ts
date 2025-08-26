@@ -4,7 +4,8 @@ export interface UserDto {
   avatarUrl?: string
   location?: string
   bio?: string
-  phone?: string
+  phone: string
+  password: string
 }
 
 export interface PendingUserDto extends UserDto {
