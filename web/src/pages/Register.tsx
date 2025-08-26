@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MessageCircle, Eye, EyeOff } from "lucide-react";
+import { useOtpVerificationStore } from "@/stores/otpVerification.store";
+import VerifyOTP from "@/components/register/verifyOTP";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +20,10 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+
+  // state for verify otp
+  const email = useOtpVerificationStore(state => state.email);
+  const setEmail = useOtpVerificationStore(state => state.setEmail);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +54,9 @@ const Register = () => {
         </div>
 
         {/* Registration Form */}
+        { 
+          email && <VerifyOTP />
+        }
         <Card className="shadow-medium border-0">
           <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-xl">Đăng ký</CardTitle>
