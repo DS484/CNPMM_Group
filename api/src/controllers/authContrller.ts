@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { AuthService } from '../services/authService'
+import { AuthService } from '../services/auth.service'
 
 interface LoginRequest {
   email: string

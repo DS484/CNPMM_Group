@@ -1,10 +1,14 @@
 import { Router } from 'express'
-import { getUserProfile, updateUserProfile } from '~/controllers/userController'
+import userController from '~/controllers/userController'
 
 const router = Router()
 
-router.get('/:id', getUserProfile)
+router.get('/:id', userController.getUserProfile)
 
-router.put('/:id', updateUserProfile)
+router.put('/:id', userController.updateUserProfile)
+
+router.post('/', userController.signUp)
+
+router.post('/verify-email', userController.verifyEmailForSignUp)
 
 export default router

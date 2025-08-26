@@ -15,7 +15,12 @@ export interface IUser extends Document {
 
 const userSchema = new Schema<IUser>(
   {
-    id: { type: String, required: true, unique: true },
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      default: () => new mongoose.Types.ObjectId().toHexString()
+    },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     avatarUrl: { type: String },
