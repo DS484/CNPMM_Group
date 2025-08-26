@@ -11,7 +11,7 @@ import { NotificationDto } from '~/dto/request/notification.dto'
 const OTP_REGISTER_KEY = 'otp_register:'
 
 class UserService {
-  async signUp(newUser: UserDto): Promise<{ message: string }> {
+  async signUp(newUser: UserDto): Promise<{ message: string, email?: string }> {
     try {
       // check existing email
       const existingUser = await userModel.findOne({ email: newUser.email })
@@ -37,10 +37,15 @@ class UserService {
         name: newUser.name
       } as NotificationDto)
 
-      return { message: 'Please check your email to verify your account' }
+      return {
+        email: newUser.email, 
+        message: 'Please check your email to verify your account' 
+      }
     } catch (error: ApiError | any) {
       console.log(error)
-      return { message: error?.message }
+      return { 
+        message: error?.message 
+      }
     }
   }
 

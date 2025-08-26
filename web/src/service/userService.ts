@@ -29,12 +29,25 @@ export const signUp = async (data: {
   avatarUrl?: string
   location?: string
   bio?: string
-  phone?: string
+  phone: string
+  password: string
 }) : Promise<ApiResponse<{
-    message: string
+    message: string,
+    email?: string
 }>> => {
   try {
     const res = await axios.post(`${API_URL}`, data);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message);
+  }
+}
+
+export const verifyEmailForSignUp = async (data: { email: string; otpCode: string }) : Promise<ApiResponse<{
+  message: string
+}>> => {
+  try {
+    const res = await axios.post(`${API_URL}/verify-email`, data);
     return res.data;
   } catch (err) {
     throw new Error(err.response?.data?.message);
