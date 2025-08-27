@@ -53,6 +53,19 @@ class UserController {
     const result = await userService.verifyEmailForSignUp(verifyDto)
     sendResponse(res, { code: 200, message: 'Success', result })
   }
+  async requestForgotPasswordOtp(req: Request, res: Response) {
+    const data: { email: string } = req.body
+
+    const result = await userService.requestForgotPasswordOtp(data.email)
+    sendResponse(res, { code: 200, message: 'Success', result })
+  }
+  async verifyOtpAndResetPassword(req: Request, res: Response) {
+    const data: { email: string; otpCode: string, newPassword: string } = req.body
+
+    const result = await userService.verifyOtpAndResetPassword(data)
+    sendResponse(res, { code: 200, message: 'Success', result })
+  }
+
 }
 
 export default new UserController()

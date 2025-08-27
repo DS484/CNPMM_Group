@@ -66,6 +66,14 @@ class NodeMailService {
         templateData = { name: emailNotification.name, token: emailNotification.token }
         break
       }
+      case EmailTypeEnum.FORGOT_PASSWORD_OTP: {
+        const emailNotification = notification as VerifyEmail
+        subject = 'Mã OTP khôi phục mật khẩu'
+        to = emailNotification.email
+        templateName = 'email-verification.html'
+        templateData = { name: emailNotification.name, token: emailNotification.token }
+        break
+      }
 
       // Thêm các loại khác nếu cần
       default:
