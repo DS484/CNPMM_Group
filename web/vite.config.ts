@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 3000,
+    proxy: {
+      '/api': 'http://localhost:5000'
+    }
   },
   plugins: [
     react(),

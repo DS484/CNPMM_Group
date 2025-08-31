@@ -1,36 +1,44 @@
-import React from 'react'
-import Banner from '@/components/home/Banner'
-import Feature from '@/components/home/Feature'
-import Category from '@/components/home/Category'
-import ProductList from '@/components/home/ProductList'
-import { Product } from '@/components/home/ProductCard'
-import Header from '@/components/home/Header'
-import Footer from '@/components/home/Footer'
-// ...existing code...
 
-// Dữ liệu mẫu cho demo
-const newProducts: Product[] = [
-  { id: '1', name: 'iPhone 15 Pro', image: '/public/placeholder.svg', price: 29990000, rating: 4.9, isNew: true },
-  { id: '2', name: 'MacBook Air M2', image: '/public/placeholder.svg', price: 24990000, rating: 4.8, isNew: true },
-  { id: '3', name: 'Tai nghe AirPods Pro', image: '/public/placeholder.svg', price: 5990000, rating: 4.7, isNew: true },
-  { id: '4', name: 'Áo thun Uniqlo', image: '/public/placeholder.svg', price: 299000, rating: 4.6, isNew: true }
-]
-
-const bestSellerProducts: Product[] = [
-  { id: '5', name: 'Samsung Galaxy S23', image: '/public/placeholder.svg', price: 21990000, rating: 4.8, isBestSeller: true },
-  { id: '6', name: 'Dell XPS 13', image: '/public/placeholder.svg', price: 27990000, rating: 4.7, isBestSeller: true },
-  { id: '7', name: 'Giày Nike Air', image: '/public/placeholder.svg', price: 3990000, rating: 4.8, isBestSeller: true },
-  { id: '8', name: 'Balo Herschel', image: '/public/placeholder.svg', price: 1599000, rating: 4.7, isBestSeller: true }
-]
-
-const topRatedProducts: Product[] = [
-  { id: '9', name: 'Kindle Paperwhite', image: '/public/placeholder.svg', price: 3990000, rating: 5.0 },
-  { id: '10', name: 'Apple Watch Series 8', image: '/public/placeholder.svg', price: 11990000, rating: 4.9 },
-  { id: '11', name: 'Áo khoác Adidas', image: '/public/placeholder.svg', price: 899000, rating: 4.9 },
-  { id: '12', name: 'Loa JBL Charge 5', image: '/public/placeholder.svg', price: 3490000, rating: 4.9 }
-]
+import React, { useEffect, useState } from 'react';
+import Banner from '@/components/home/Banner';
+import Feature from '@/components/home/Feature';
+import Category from '@/components/home/Category';
+import ProductList from '@/components/home/ProductList';
+import { Product } from '@/components/home/ProductCard';
+import Header from '@/components/home/Header';
+import Footer from '@/components/home/Footer';
+import {
+  fetchNewestProducts,
+  fetchBestSellerProducts,
+  fetchMostViewedProducts
+} from '@/service/productService';
 
 const Home: React.FC = () => {
+  const [newProducts, setNewProducts] = useState<Product[]>([]);
+  const [bestSellerProducts, setBestSellerProducts] = useState<Product[]>([]);
+  const [topRatedProducts, setTopRatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      fetchNewestProducts(),
+      fetchBestSellerProducts(),
+      fetchMostViewedProducts()
+    ])
+      .then(([newest, bestSeller, mostViewed]) => {
+        setNewProducts(newest);
+        setBestSellerProducts(bestSeller);
+        setTopRatedProducts(mostViewed);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError('Không thể tải dữ liệu sản phẩm.');
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <>
       <Header />
@@ -38,13 +46,21 @@ const Home: React.FC = () => {
         <Banner />
         <Feature />
         <Category />
-        <ProductList title="Sản phẩm mới" products={newProducts} />
-        <ProductList title="Bán chạy nhất" products={bestSellerProducts} />
-        <ProductList title="Được đánh giá cao" products={topRatedProducts} />
+        {loading ? (
+          <div className="text-center py-12 text-lg text-blue-600 font-semibold">Đang tải sản phẩm...</div>
+        ) : error ? (
+          <div className="text-center py-12 text-lg text-red-500 font-semibold">{error}</div>
+        ) : (
+          <>
+            <ProductList title="Sản phẩm mới" products={newProducts} />
+            <ProductList title="Bán chạy nhất" products={bestSellerProducts} />
+            <ProductList title="Được đánh giá cao" products={topRatedProducts} />
+          </>
+        )}
       </div>
       <Footer />
     </>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
