@@ -13,7 +13,7 @@ const OTP_FORGOT_KEY = 'otp_forget_key:'
 const OTP_TTL_SECONDS = 180
 
 class UserService {
-  async signUp(newUser: UserDto): Promise<{ message: string, email?: string }> {
+  async signUp(newUser: UserDto): Promise<{ message: string; email?: string }> {
     try {
       // check existing email
       const existingUser = await userModel.findOne({ email: newUser.email })
@@ -40,13 +40,13 @@ class UserService {
       } as NotificationDto)
 
       return {
-        email: newUser.email, 
+        email: newUser.email,
         message: 'Please check your email to verify your account' 
       }
     } catch (error: ApiError | any) {
       console.log(error)
-      return { 
-        message: error?.message 
+      return {
+        message: error?.message
       }
     }
   }
@@ -103,7 +103,11 @@ class UserService {
   /**
    * B2: Người dùng gửi email + otp + newPassword -> xác thực và cập nhật mật khẩu
    */
-  async verifyOtpAndResetPassword(payload: { email: string; otpCode: string; newPassword: string }): Promise<{ message: string }> {
+  async verifyOtpAndResetPassword(payload: {
+    email: string
+    otpCode: string
+    newPassword: string
+  }): Promise<{ message: string }> {
     const { email, otpCode, newPassword } = payload
 
     const otpData = await redisService.get<{ email: string; otpCode: string }>(`${OTP_FORGOT_KEY}${email}`)
