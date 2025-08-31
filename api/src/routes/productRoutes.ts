@@ -1,5 +1,10 @@
 import { Router } from 'express'
-import { getNewestProducts, getBestSellerProducts, getMostViewedProducts, createProduct } from '../controllers/productController'
+import {
+  getNewestProducts,
+  getBestSellerProducts,
+  getMostViewedProducts,
+  createProduct
+} from '../controllers/productController'
 
 const router = Router()
 
