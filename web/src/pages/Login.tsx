@@ -20,7 +20,7 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8017/api/auth/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -34,7 +34,8 @@ const Login = () => {
         setError(data.message || "Đăng nhập thất bại");
       }
     } catch (err) {
-      setError("Có lỗi xảy ra, vui lòng thử lại!");
+      console.error("Login error:", err);
+      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
     setLoading(false);
   };
