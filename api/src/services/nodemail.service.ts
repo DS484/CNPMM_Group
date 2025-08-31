@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer'
 import { EmailTypeEnum } from '~/enums/emailType.enum'
 import { NotificationDto, VerifyEmail } from '~/dto/request/notification.dto'
-// import { QueueNameEnum } from '~/enums/rabbitQueue.enum'
 import { renderTemplate } from '~/utils/templateUtil'
 import dotenv from 'dotenv'
 

@@ -4,6 +4,7 @@ import cors from 'cors'
 import connectDB from './config/db'
 import userRoutes from './routes/userRoutes'
 import authRoutes from './routes/authRoutes'
+import productRoutes from './routes/productRoutes'
 import { errorHandlingMiddleware } from './middleware/error-handler.midleware'
 
 dotenv.config()
@@ -15,8 +16,10 @@ const app = express()
 
 app.use(
   cors({
-    origin: 'http://localhost:3000',
-    credentials: true
+    origin: true, // Cho phép mọi origin trong môi trường phát triển
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   })
 )
 
@@ -28,6 +31,9 @@ app.use('/api/auth', authRoutes)
 
 // User
 app.use('/api/users', userRoutes)
+
+// Product
+app.use('/api/products', productRoutes)
 
 app.use(errorHandlingMiddleware)
 
