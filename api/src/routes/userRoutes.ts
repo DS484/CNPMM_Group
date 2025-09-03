@@ -3,6 +3,8 @@ import userController from '~/controllers/userController'
 
 const router = Router()
 
+router.get('/me', userController.getUserProfile2)
+
 router.get('/:id', userController.getUserProfile)
 
 router.put('/:id', userController.updateUserProfile)

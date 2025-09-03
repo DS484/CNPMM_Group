@@ -23,7 +23,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       })
       return
     }
-
     // Authenticate user
     const user = await AuthService.validateUser(email, password)
     if (!user) {

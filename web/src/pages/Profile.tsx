@@ -7,11 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Settings, 
-  Camera, 
-  Phone, 
-  Mail, 
+import {
+  Settings,
+  Camera,
+  Phone,
+  Mail,
   Calendar,
   MapPin,
   Edit,
@@ -20,6 +20,7 @@ import {
   Lock,
   MessageCircle
 } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 interface UserProfile {
   id: string;
@@ -33,17 +34,21 @@ interface UserProfile {
 }
 
 const Profile = () => {
-  const [isEditing, setIsEditing] = useState(false);
-    const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const location = useLocation();
+  const userId = location.state?.userId;
 
-    useEffect(() => {
-        getUserProfile('68a933bf7c44003cba2e6783')
-          .then(data => setProfileData(data))
-          .catch(err => console.error("Lỗi load hồ sơ:", err))
-      }, []);
+  const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    if (!userId) return;
+    getUserProfile(userId)
+      .then(data => setProfileData(data))
+      .catch(err => console.error("Lỗi load hồ sơ:", err))
+  }, [userId]);
 
   const handleSave = async () => {
-    if(!profileData) return
+    if (!profileData) return
     try {
       const updated = await updateUserProfile(profileData.id, profileData)
       setProfileData(updated)

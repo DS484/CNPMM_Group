@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MessageCircle, Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -29,7 +31,7 @@ const Login = () => {
       if (data.success && data.data?.token && data.data?.user?.id) {
         localStorage.setItem("token", data.data.token);
         // Redirect to profile page
-        window.location.href = `/profile/${data.data.user.id}`;
+        navigate("/")
       } else {
         setError(data.message || "Đăng nhập thất bại");
       }
