@@ -10,13 +10,15 @@ import Footer from '@/components/home/Footer';
 import {
   fetchNewestProducts,
   fetchBestSellerProducts,
-  fetchMostViewedProducts
+  fetchMostViewedProducts,
+  fetchTopDiscountProducts,
 } from '@/service/productService';
 
 const Home: React.FC = () => {
   const [newProducts, setNewProducts] = useState<Product[]>([]);
   const [bestSellerProducts, setBestSellerProducts] = useState<Product[]>([]);
   const [topRatedProducts, setTopRatedProducts] = useState<Product[]>([]);
+  const [topDiscountProducts, setTopDiscountProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,12 +27,14 @@ const Home: React.FC = () => {
     Promise.all([
       fetchNewestProducts(),
       fetchBestSellerProducts(),
-      fetchMostViewedProducts()
+      fetchMostViewedProducts(),
+      fetchTopDiscountProducts()
     ])
-      .then(([newest, bestSeller, mostViewed]) => {
+      .then(([newest, bestSeller, mostViewed, topDiscount]) => {
         setNewProducts(newest);
         setBestSellerProducts(bestSeller);
         setTopRatedProducts(mostViewed);
+        setTopDiscountProducts(topDiscount);
         setLoading(false);
       })
       .catch((err) => {
@@ -52,6 +56,7 @@ const Home: React.FC = () => {
           <div className="text-center py-12 text-lg text-red-500 font-semibold">{error}</div>
         ) : (
           <>
+            <ProductList title="Khuyến mãi cao nhất" products={topDiscountProducts} />
             <ProductList title="Sản phẩm mới" products={newProducts} />
             <ProductList title="Bán chạy nhất" products={bestSellerProducts} />
             <ProductList title="Được đánh giá cao" products={topRatedProducts} />
