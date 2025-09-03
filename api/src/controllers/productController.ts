@@ -37,3 +37,12 @@ export const createProduct = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: 'Server error', error })
   }
 }
+
+export const getTopDiscountProducts = async (req: Request, res: Response) => {
+  try {
+    const products = await productService.getTopDiscountProducts()
+    res.json({ success: true, data: products })
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error', error })
+  }
+}

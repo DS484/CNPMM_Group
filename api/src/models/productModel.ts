@@ -35,9 +35,10 @@ const productSchema = new Schema<IProduct>(
     rating: { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
     isBestSeller: { type: Boolean, default: false },
-    tags: { type: [String], default: [] }
+    tags: { type: [String], default: [] },
   },
   { timestamps: true }
 )
+productSchema.index({ discount: -1, updatedAt: -1 })
 
 export default mongoose.model<IProduct>('Product', productSchema)
