@@ -47,7 +47,6 @@ class ProductService {
   }
   async getNewestProducts(): Promise<ProductDto[]> {
     const products = await Product.find().sort({ createdAt: -1 }).limit(8)
-    console.log(products)
     return products.map((p) => ({
       id: p.id,
       name: p.name,

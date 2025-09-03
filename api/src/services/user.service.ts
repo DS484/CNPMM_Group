@@ -7,6 +7,8 @@ import redisService from './redis.service'
 import { EmailTypeEnum } from '~/enums/emailType.enum'
 import nodemailService from './nodemail.service'
 import { NotificationDto } from '~/dto/request/notification.dto'
+import jwt from 'jsonwebtoken'
+import { APP_SECRET } from '~/config/jwt'
 
 const OTP_REGISTER_KEY = 'otp_register:'
 const OTP_FORGOT_KEY = 'otp_forget_key:'
@@ -41,7 +43,7 @@ class UserService {
 
       return {
         email: newUser.email,
-        message: 'Please check your email to verify your account' 
+        message: 'Please check your email to verify your account'
       }
     } catch (error: ApiError | any) {
       console.log(error)
@@ -89,7 +91,7 @@ class UserService {
     if (!user) return { message: 'Nếu email tồn tại, chúng tôi đã gửi OTP khôi phục' }
 
     const otp = helperService.generateVerifyCode() // ví dụ 6 số
-    await redisService.set(`${OTP_FORGOT_KEY}${email}`, {email, otpCode: otp} , OTP_TTL_SECONDS)
+    await redisService.set(`${OTP_FORGOT_KEY}${email}`, { email, otpCode: otp }, OTP_TTL_SECONDS)
 
     await nodemailService.sendMail({
       type: EmailTypeEnum.FORGOT_PASSWORD_OTP,
@@ -130,6 +132,26 @@ class UserService {
     await redisService.del(`${OTP_FORGOT_KEY}${email}`)
 
     return { message: 'Đổi mật khẩu thành công. Hãy đăng nhập lại.' }
+  }
+
+  async getUserProfileService(token: string) {
+    if (!token) {
+      throw { status: 401, message: 'No token provided' }
+    }
+
+    try {
+      const decoded = jwt.verify(token, APP_SECRET) as { id: string }
+      const userId = decoded.id
+
+      const user = await userModel.findById(userId).select('-password')
+      if (!user) {
+        throw { status: 404, message: 'User not found' }
+      }
+
+      return user
+    } catch (err) {
+      throw { status: 403, message: 'Invalid or expired token', error: err }
+    }
   }
 }
 

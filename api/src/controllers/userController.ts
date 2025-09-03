@@ -3,6 +3,8 @@ import { UserDto } from '~/dto/request/user.dto'
 import sendResponse from '~/dto/response/send-response'
 import userModel from '~/models/userModel'
 import userService from '~/services/user.service'
+import jwt from 'jsonwebtoken'
+import { APP_SECRET } from '~/config/jwt'
 
 class UserController {
   async getUserProfile(req: Request, res: Response) {
@@ -60,12 +62,24 @@ class UserController {
     sendResponse(res, { code: 200, message: 'Success', result })
   }
   async verifyOtpAndResetPassword(req: Request, res: Response) {
-    const data: { email: string; otpCode: string, newPassword: string } = req.body
+    const data: { email: string; otpCode: string; newPassword: string } = req.body
 
     const result = await userService.verifyOtpAndResetPassword(data)
     sendResponse(res, { code: 200, message: 'Success', result })
   }
 
+  async getUserProfile2(req: Request, res: Response) {
+    try {
+      const authHeader = req.headers['authorization']
+      const token = authHeader && authHeader.split(' ')[1]
+
+      const user = await userService.getUserProfileService(token!)
+
+      return res.json({ success: true, user })
+    } catch (err: any) {
+      return res.status(err.status || 500).json({ success: false, message: err.message, error: err.error })
+    }
+  }
 }
 
 export default new UserController()
